@@ -8,7 +8,7 @@
 //     DHT_Data readDHT();
 
 // };
-DHTSensor::DHTSensor(int pin = 5, int type=11):_dht_pin(pin), _dht_type(type), _dht(_dht_pin, _dht_type){
+DHTSensor::DHTSensor(int pin = 2, int type=11):_dht_pin(pin), _dht_type(type), _dht(_dht_pin, _dht_type){
    
     _dht.begin();
 }
