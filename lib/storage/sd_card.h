@@ -22,6 +22,7 @@ enum card_size_format: unsigned int {
 };
 
 struct sd_card_info {
+    const char* card_type_str;
     uint8_t card_type;
     uint64_t card_size;
     size_t num_sectors;

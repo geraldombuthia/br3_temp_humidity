@@ -11,6 +11,8 @@ SD_FS::~SD_FS(){
 int SD_FS::get_card_info(sd_card_info &data, card_size_format format) {
     card_info.card_type = SD.cardType();
 
+    // card_info.card_type_str = cardTypeToString(card_info.card_type);
+
     card_info.card_size = SD.cardSize() / 1024 ^ format;
     card_info.size_format = format;
 
@@ -77,7 +79,7 @@ int SD_FS::removeDir(const char* path) {
     return 0;
 }
 
-int readFile(const char* path) {
+int SD_FS::readFile(const char* path) {
     Serial.printf("Reading file: %s\n", path);
 
     File file = SD.open(path);
@@ -86,9 +88,9 @@ int readFile(const char* path) {
         return -1;
     }
     Serial.print("Read from file: ");
-    while(file.available()) {
-        Serial.write(file.read());
-    }
+    // while(file.available()) {
+    //     Serial.write(file.read());
+    // }
     file.close();
     return 0;
 }
@@ -111,7 +113,7 @@ int SD_FS::writeFile(const char* path, const char* message) {
     return 0;
 }
 
-int appendFile(const char* path, const char* message) {
+int SD_FS::appendFile(const char* path, const char* message) {
     Serial.printf("Appending to file: %s\n", path);
 
     File file = SD.open(path, FILE_APPEND);
@@ -130,7 +132,7 @@ int appendFile(const char* path, const char* message) {
     return 0;
 }
 
-int renameFile(const char* path1, const char* path2) {
+int SD_FS::renameFile(const char* path1, const char* path2) {
     Serial.printf("Renaming file %s to %s\n", path1, path2);
 
     if (SD.rename(path1, path2)) {
@@ -143,7 +145,7 @@ int renameFile(const char* path1, const char* path2) {
     return 0;
 }
 
-int deleteFile(const char * path) {
+int SD_FS::deleteFile(const char * path) {
     Serial.printf("Deleting File: %s\n", path);
     if (SD.remove(path)) {
         Serial.println("File deleted");
@@ -154,7 +156,7 @@ int deleteFile(const char * path) {
     }
 }
 
-int testFileIO(const char* path) {
+int SD_FS::testFileIO(const char* path) {
     File file = SD.open(path);
 
     static uint8_t buf[512];
