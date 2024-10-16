@@ -15,7 +15,7 @@ int COMMS::begin()
 
     Serial.printf("Chip ID: %llu\n", chipId);
     WiFi.begin(_ssid, _password);
-    Serial.println("Connecting");
+    Serial.println("Connecting to WiFi network");
     if (conn_timeout < CONNECTION_TIMEOUT_INTERVAL)
     {
         while (WiFi.status() != WL_CONNECTED)
@@ -127,7 +127,7 @@ String COMMS::isoToUtf8(String input) {
     return output;
 }
 
-int COMMS::getChipId(uint64_t &chip_id) {
+int COMMS::getChipId(uint64_t &chip_id)  {
 
     chip_id = chipId;
 

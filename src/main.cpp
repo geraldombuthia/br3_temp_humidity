@@ -5,6 +5,7 @@
 #include "sd_card.h"
 #include "comms.h"
 #include "uuid4Gen.h"
+#include "sockets.h"
 #include "../Utils/Time/ntpClient.h"
 
 
@@ -20,6 +21,7 @@ DHTSensor dht_sensor(DHTPIN, DHTTYPE);
 SD_FS sd_access(5);
 DHT_Data env_data;
 sd_card_info card_data;
+SocketConn socket;
 
 COMMS comms(ssid, password);
 UUID4 uuid4;
@@ -35,6 +37,8 @@ void setup() {
   comms.begin();
 
   comms.getRequest(serverPath, data_got);
+
+  socket.begin();
 
   NTP::get_default_instance()->configureNTP();
   NTP::get_default_instance()->getEpochTime(time);
@@ -79,7 +83,7 @@ void loop() {
   Serial.print(env_data.hum);
   Serial.println(" %");
   data_str = String(counter) + "," + String(env_data.temp) +  "," + String(env_data.hum);
-  sd_access.appendFile("/dht_data.csv", data_str.c_str());
+  // sd_access.appendFile("/dht_data.csv", data_str.c_str());
 
   uint64_t _id;
   comms.getChipId(_id);
@@ -91,9 +95,18 @@ void loop() {
   sensor_data.uuid = uuid_str;
   NTP::get_default_instance()->getEpochTime(time_stamp);
   sensor_data.timestamp = time_stamp;
-  comms.postRequest(serverPath, sensor_data);
+  // comms.postRequest(serverPath, sensor_data);
   digitalWrite(LED, HIGH);
   delay(1000);
   digitalWrite(LED, LOW);
   delay(1000);
+  JsonDocument doc;
+  doc["message"] = "Mayday, mayday Connection! Over";
+  doc["timestamp"] = time_stamp; // Sends seconds
+  doc["timeformat"] = "epoch";
+  doc["senderId"] = String(_id);
+  Serial.println("Timestamp below\n");
+  Serial.printf("%ld", time_stamp * 1000);
+  JsonObject jsonObj = doc.as<JsonObject>();
+  socket.messageSend(jsonObj);
 }
